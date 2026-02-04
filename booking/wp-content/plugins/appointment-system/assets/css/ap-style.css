@@ -118,6 +118,110 @@ a {
         font-size: 19px;
 }
 
+/* Appointment booking layout */
+.accordion-container {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 30px 20px 50px;
+}
+
+.accordion-section {
+  background: #ffffff;
+  border: 1px solid #e6e6e6;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+  border-radius: 8px;
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #2d2d2d;
+  background: #f7f7f7;
+  border-bottom: 1px solid #e6e6e6;
+}
+
+.steps {
+  padding: 25px 22px 30px;
+}
+
+.steps .flex {
+  display: flex;
+  gap: 28px;
+  align-items: flex-start;
+}
+
+.steps .left-side,
+.steps .right-side {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.section {
+  margin-bottom: 22px;
+}
+
+.section .sub-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #3b3b3b;
+  margin-bottom: 8px;
+}
+
+.section--added table {
+  background: #fafafa;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.section--added #alldatahead {
+  border-bottom: 1px solid #e1e1e1;
+}
+
+.right-side .section--calendar {
+  border: 1px solid #e6e6e6;
+  border-radius: 8px;
+  padding: 18px;
+  background: #fff;
+}
+
+.booking-cta {
+  margin-top: 20px;
+  padding: 16px;
+  background: #fdf3e5;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.booking-cta p {
+  margin: 0;
+  font-size: 15px;
+  color: #6d4d3a;
+}
+
+.next-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 26px;
+  margin-top: 18px;
+}
+
+@media (max-width: 991px) {
+  .steps .flex {
+    flex-direction: column;
+  }
+
+  .accordion-container {
+    padding: 20px 16px 40px;
+  }
+}
+
 .nit-nav-box {
   display: flex;
   justify-content: space-between;
@@ -703,7 +807,6 @@ table.table #alldatahead td, table.table #alldatahead th{font-size:12px;}
 
 
 }
-
 
 
 
