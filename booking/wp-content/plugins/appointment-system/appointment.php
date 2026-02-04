@@ -18,27 +18,77 @@ if ( !defined('AP_PLUGIN_DIR')) {
 if ( !defined('AP_PLUGIN_DIR_PATH')) {
    define('AP_PLUGIN_DIR_PATH', plugin_dir_path( __FILE__ ));
 }
+if ( !defined('AP_PLUGIN_VERSION')) {
+   define('AP_PLUGIN_VERSION', '1.0.1');
+}
 //echo $_SERVER['HTTP_REFERER'];
 //die;
 
-function ap_plugin_stylesheet() {
-   wp_enqueue_style('ap-bootstrap', AP_PLUGIN_DIR. 'assets/css/bootstrap.min.css');
-   //wp_enqueue_style('ap-css', AP_PLUGIN_DIR. 'assets/css/ap-style.css');
-   wp_enqueue_style('jquery-ui.css', AP_PLUGIN_DIR. 'assets/css/jquery-ui.css');
-   wp_enqueue_style('gijgo.min.css', AP_PLUGIN_DIR. 'assets/css/gijgo.min.css');
-   wp_enqueue_style('jquery.dataTables.min.css', AP_PLUGIN_DIR. 'assets/css/jquery.dataTables.min.css');
-   wp_enqueue_style('ap-css', AP_PLUGIN_DIR. 'assets/css/ap-style.css');
+function ap_enqueue_assets() {
+   $version = AP_PLUGIN_VERSION;
 
-   wp_enqueue_script('jquery-1.12.4.js', AP_PLUGIN_DIR. 'assets/js/jquery-1.12.4.js');
-   wp_enqueue_script('jquery.min.js', AP_PLUGIN_DIR. 'assets/js/jquery.min.js','',false);
-   wp_enqueue_script('popper.min.js', AP_PLUGIN_DIR. 'assets/js/popper.min.js','',false);
-   wp_enqueue_script('bootstrap.min.js', AP_PLUGIN_DIR. 'assets/js/bootstrap.min.js','',false);
-   wp_enqueue_script('gijgo.min.js', AP_PLUGIN_DIR. 'assets/js/gijgo.min.js');
-   wp_enqueue_script('jquery-ui.js', AP_PLUGIN_DIR. 'assets/js/jquery-ui.js' ,'',false);
-   wp_enqueue_script('jquery.dataTables.min.js', AP_PLUGIN_DIR. 'assets/js/jquery.dataTables.min.js' ,'',false);
-   wp_enqueue_script('jquery.sweetalert.min.js', AP_PLUGIN_DIR. 'assets/js/sweetalert.min.js' ,'',false);
+   wp_enqueue_style('ap-bootstrap', AP_PLUGIN_DIR . 'assets/css/bootstrap.min.css', array(), $version);
+   wp_enqueue_style('jquery-ui.css', AP_PLUGIN_DIR . 'assets/css/jquery-ui.css', array(), $version);
+   wp_enqueue_style('gijgo.min.css', AP_PLUGIN_DIR . 'assets/css/gijgo.min.css', array(), $version);
+   wp_enqueue_style('jquery.dataTables.min.css', AP_PLUGIN_DIR . 'assets/css/jquery.dataTables.min.css', array(), $version);
+   wp_enqueue_style('ap-css', AP_PLUGIN_DIR . 'assets/css/ap-style.css', array(), $version);
+
+   wp_enqueue_script('jquery');
+   wp_enqueue_script('popper.min.js', AP_PLUGIN_DIR . 'assets/js/popper.min.js', array('jquery'), $version, true);
+   wp_enqueue_script('bootstrap.min.js', AP_PLUGIN_DIR . 'assets/js/bootstrap.min.js', array('jquery', 'popper.min.js'), $version, true);
+   wp_enqueue_script('gijgo.min.js', AP_PLUGIN_DIR . 'assets/js/gijgo.min.js', array('jquery'), $version, true);
+   wp_enqueue_script('jquery-ui.js', AP_PLUGIN_DIR . 'assets/js/jquery-ui.js', array('jquery'), $version, true);
+   wp_enqueue_script('jquery.dataTables.min.js', AP_PLUGIN_DIR . 'assets/js/jquery.dataTables.min.js', array('jquery'), $version, true);
+   wp_enqueue_script('jquery.sweetalert.min.js', AP_PLUGIN_DIR . 'assets/js/sweetalert.min.js', array('jquery'), $version, true);
 }
-add_action('init', 'ap_plugin_stylesheet'); //admin_enqueue_scripts  init    
+
+function ap_should_enqueue_frontend_assets() {
+   if (is_admin()) {
+      return false;
+   }
+
+   $post = get_post();
+   if (!$post) {
+      return false;
+   }
+
+   $shortcodes = array('new_appointment', 'new_appointment_payment', 'appointment_payment_sucess');
+   foreach ($shortcodes as $shortcode) {
+      if (has_shortcode($post->post_content, $shortcode)) {
+         return true;
+      }
+   }
+
+   return false;
+}
+
+function ap_enqueue_frontend_assets() {
+   if (ap_should_enqueue_frontend_assets()) {
+      ap_enqueue_assets();
+   }
+}
+add_action('wp_enqueue_scripts', 'ap_enqueue_frontend_assets');
+
+function ap_enqueue_admin_assets($hook) {
+   $page = isset($_GET['page']) ? sanitize_key($_GET['page']) : '';
+   $allowed_pages = array(
+      'enviro-appointment-system',
+      'appointment-system-location',
+      'appointment-system-services',
+      'appointment-system-connection',
+      'appointment-system-connection-price',
+      'appointment-system-engineer',
+      'appointment-system-addnew',
+      'ap-view-appointment',
+      'ap-view-appointment-location',
+      'ap-pay-appointment',
+   );
+
+   if ($page && in_array($page, $allowed_pages, true)) {
+      ap_enqueue_assets();
+   }
+}
+add_action('admin_enqueue_scripts', 'ap_enqueue_admin_assets');
 register_activation_hook( __FILE__, 'crudOperationsTable');
 require AP_PLUGIN_DIR_PATH. 'ap-db.php';
 require AP_PLUGIN_DIR_PATH. 'ap-header.php';
